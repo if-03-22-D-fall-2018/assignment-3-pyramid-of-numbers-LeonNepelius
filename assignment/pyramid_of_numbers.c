@@ -76,5 +76,11 @@ void copy_big_int(const struct BigInt *from, struct BigInt *to);
 */
 int main(int argc, char *argv[])
 {
+	char input[MAX_DIGITS];
+	printf("Pyramid of Numbers\n");
+	printf("\n");
+	printf("Please enter a number: ");
+	scanf("%s\n", input);
+	printf("%s\n", input);
 	return 0;
 }
