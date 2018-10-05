@@ -38,7 +38,16 @@ struct BigInt {
 */
 int strtobig_int(const char *str, int len, struct BigInt *big_int)
 {
-	return 0;
+	int converted =0;
+	int count = len+1;
+	len -= 1;
+	for (size_t i = 0; i < count; i++) {
+		big_int->the_int[i] = str[len] - '0';
+		converted++;
+		len--;
+	}
+	big_int->digits_count = converted;
+	return converted-1;
 }
 /** print_big_int() prints a BigInt.
 *** @param *big_int The BigInt to be printed.
@@ -80,11 +89,19 @@ int main(int argc, char *argv[])
 {
 	char input[MAX_DIGITS];
 	int length = 0;
+	int converted
 	printf("Pyramid of Numbers\n");
 	printf("\n");
 	printf("Please enter a number: ");
 	scanf("%s", input);
 	length = strlen(input);
-	strtobig_int(input,length,BigInt);
+	struct BigInt bigint;
+	converted = strtobig_int(input,length,&bigint);
+	/*
+	for (size_t i = 0; i < length; i++) {
+		printf("%d\n", bigint.the_int[i]);
+	}
+	printf("%d\n", converted);
+	*/
 	return 0;
 }
