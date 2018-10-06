@@ -39,9 +39,13 @@ struct BigInt {
 int strtobig_int(const char *str, int len, struct BigInt *big_int)
 {
 	int converted =0;
-	int count = len+1;
+	int count = len;
 	len -= 1;
 	for (size_t i = 0; i < count; i++) {
+		if (str[len] < '0' || str[len] > '9')
+		{
+			return 0;
+		}
 		big_int->the_int[i] = str[len] - '0';
 		converted++;
 		len--;
@@ -52,7 +56,14 @@ int strtobig_int(const char *str, int len, struct BigInt *big_int)
 /** print_big_int() prints a BigInt.
 *** @param *big_int The BigInt to be printed.
 */
-void print_big_int(const struct BigInt *big_int);
+void print_big_int(const struct BigInt *big_int)
+{
+	for (size_t i = 0; i < big_int->digits_count; i++) {
+		printf("%d",big_int->the_int[i]);
+
+	}
+	printf("\n");
+}
 
 /** multiply() multiplies a BigInt by an int.
 *** @param big_int The BigInt to be multiplied.
@@ -89,14 +100,23 @@ int main(int argc, char *argv[])
 {
 	char input[MAX_DIGITS];
 	int length = 0;
-	int converted
+	int converted;
+	struct BigInt bigint;
+
 	printf("Pyramid of Numbers\n");
 	printf("\n");
 	printf("Please enter a number: ");
 	scanf("%s", input);
+
 	length = strlen(input);
-	struct BigInt bigint;
 	converted = strtobig_int(input,length,&bigint);
+
+	if (converted == 0)
+	{
+		return 0;
+	}
+
+	print_big_int(&bigint);
 	/*
 	for (size_t i = 0; i < length; i++) {
 		printf("%d\n", bigint.the_int[i]);
