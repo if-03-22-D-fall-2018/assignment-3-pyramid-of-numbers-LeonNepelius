@@ -58,7 +58,9 @@ int strtobig_int(const char *str, int len, struct BigInt *big_int)
 */
 void print_big_int(const struct BigInt *big_int)
 {
-	for (size_t i = 0; i < big_int->digits_count; i++) {
+	printf("Gesamtzahl: ");
+	//printf("Size: %d\n",big_int->digits_count);
+	for (int i = 0; i < big_int->digits_count; i++) {
 		printf("%d",big_int->the_int[i]);
 
 	}
@@ -70,7 +72,37 @@ void print_big_int(const struct BigInt *big_int)
 *** @param factor The int value which is multiplied by BigInt.
 *** @param *big_result The result of the multiplication.
 */
-void multiply(const struct BigInt *big_int, int factor, struct BigInt *big_result);
+void multiply(const struct BigInt *big_int, int factor, struct BigInt *big_result)
+{
+	int overflowNumber=0;
+	int tempResult = 0;
+	int counter = big_int->digits_count;
+	big_result->digits_count = big_int->digits_count;
+	for (int i = 0; i < counter; i++) {
+		tempResult=big_int->the_int[i]*factor+overflowNumber;
+		overflowNumber = 0;
+		if (tempResult>9) {
+			if (i == big_int->digits_count-1) // last digit > 9
+			{
+				big_result->digits_count++;
+				big_result->the_int[i]=tempResult%10;
+				big_result->the_int[i+1]=tempResult/10;
+				printf("extra digit: idx: %d value %d \n", i+1, big_result->the_int[i+1]);
+				//break;
+			} else {
+				overflowNumber=tempResult/10;
+				big_result->the_int[i]=tempResult%10;
+			}
+		}
+		else
+		{
+			big_result->the_int[i]=tempResult;
+		}
+		printf("idx: %d, Zahl: %d ,Factor: %d = Result: %d\n",i,big_int->the_int[i], factor, big_result->the_int[i]);
+		printf("overflowNumber: %d tempResult %d \n", overflowNumber, tempResult);
+	}
+
+}
 
 /** divide() multiplies a BigInt by an int.
 *** @param big_int The BigInt to be divided.
@@ -84,6 +116,21 @@ void divide(const struct BigInt *big_int, int divisor, struct BigInt *big_result
 *** @param *to The target where we want to copy to.
 */
 void copy_big_int(const struct BigInt *from, struct BigInt *to);
+
+void bigintarray_reverse(struct BigInt *big_int)
+{
+	int i = big_int->digits_count-1;
+  int j = 0;
+   while(i > j)
+   {
+     int temp = big_int->the_int[i];
+		 int temp2 = big_int->the_int[j];
+     big_int->the_int[i] = temp2;
+     big_int->the_int[j] = temp;
+     i--;
+     j++;
+   }
+}
 
 /**
 *** main() reads the base number from which the pyramid has to be calculated
@@ -102,7 +149,8 @@ int main(int argc, char *argv[])
 	int length = 0;
 	int converted;
 	struct BigInt bigint;
-
+	struct BigInt bigint_result;
+	int factor = 2;
 	printf("Pyramid of Numbers\n");
 	printf("\n");
 	printf("Please enter a number: ");
@@ -117,6 +165,13 @@ int main(int argc, char *argv[])
 	}
 
 	print_big_int(&bigint);
+	multiply(&bigint,factor,&bigint_result);
+
+  bigintarray_reverse(&bigint_result);
+	//printf("Please enter a number: ");
+
+print_big_int(&bigint_result);
+	//print_big_int(&bigint_result);
 	/*
 	for (size_t i = 0; i < length; i++) {
 		printf("%d\n", bigint.the_int[i]);
