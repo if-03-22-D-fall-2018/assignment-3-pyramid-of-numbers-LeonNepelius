@@ -14,6 +14,7 @@
  */
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
 /// The maximum number of digits allowed in a big int.
 #define MAX_DIGITS 80
 
@@ -58,13 +59,14 @@ int strtobig_int(const char *str, int len, struct BigInt *big_int)
 */
 void print_big_int(const struct BigInt *big_int)
 {
-	printf("Gesamtzahl: ");
-	//printf("Size: %d\n",big_int->digits_count);
-	for (int i = 0; i < big_int->digits_count; i++) {
-		printf("%d",big_int->the_int[i]);
-
-	}
-	printf("\n");
+	bool notnulldigitfound = false;
+		for (int i = 0; i < big_int->digits_count; i++) {
+			if (big_int->the_int[i] > 0 || notnulldigitfound == true)
+			{
+							printf("%d",big_int->the_int[i]);
+							notnulldigitfound = true;
+			}
+		}
 }
 
 /** multiply() multiplies a BigInt by an int.
@@ -87,8 +89,6 @@ void multiply(const struct BigInt *big_int, int factor, struct BigInt *big_resul
 				big_result->digits_count++;
 				big_result->the_int[i]=tempResult%10;
 				big_result->the_int[i+1]=tempResult/10;
-				printf("extra digit: idx: %d value %d \n", i+1, big_result->the_int[i+1]);
-				//break;
 			} else {
 				overflowNumber=tempResult/10;
 				big_result->the_int[i]=tempResult%10;
@@ -98,8 +98,6 @@ void multiply(const struct BigInt *big_int, int factor, struct BigInt *big_resul
 		{
 			big_result->the_int[i]=tempResult;
 		}
-		printf("idx: %d, Zahl: %d ,Factor: %d = Result: %d\n",i,big_int->the_int[i], factor, big_result->the_int[i]);
-		printf("overflowNumber: %d tempResult %d \n", overflowNumber, tempResult);
 	}
 
 }
@@ -109,7 +107,25 @@ void multiply(const struct BigInt *big_int, int factor, struct BigInt *big_resul
 *** @param divisor The int value by which we want to devide big_int.
 *** @param *big_result The result of the division.
 */
-void divide(const struct BigInt *big_int, int divisor, struct BigInt *big_result);
+void divide(const struct BigInt *big_int, int divisor, struct BigInt *big_result)
+{
+	int overflowNumber = 0;
+	int tempResult;
+		for (size_t i = 0; i < big_int->digits_count; i++) {
+			big_result->the_int[i] = 0;
+			big_result->digits_count = i+1;
+			tempResult = overflowNumber*10 + big_int->the_int[i];
+			if (tempResult >= divisor) {
+				big_result->the_int[i] = tempResult / divisor;
+				overflowNumber = tempResult % divisor;
+			}
+			else
+			{
+				overflowNumber = big_int->the_int[i];
+			}
+
+		}
+}
 
 /** copy_big_int() copies a BigInt to another BigInt.
 *** @param from The source where we want to copy from.
@@ -150,7 +166,9 @@ int main(int argc, char *argv[])
 	int converted;
 	struct BigInt bigint;
 	struct BigInt bigint_result;
+	struct BigInt bigint_result_devide;
 	int factor = 2;
+	int divisor = 2;
 	printf("Pyramid of Numbers\n");
 	printf("\n");
 	printf("Please enter a number: ");
@@ -164,19 +182,31 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 
-	print_big_int(&bigint);
-	multiply(&bigint,factor,&bigint_result);
 
-  bigintarray_reverse(&bigint_result);
-	//printf("Please enter a number: ");
-
-print_big_int(&bigint_result);
-	//print_big_int(&bigint_result);
-	/*
-	for (size_t i = 0; i < length; i++) {
-		printf("%d\n", bigint.the_int[i]);
+	//multiply pyramid
+	for (size_t i = 0; i < 8; i++) {
+		multiply(&bigint,factor,&bigint_result);
+		bigintarray_reverse(&bigint_result);
+		bigintarray_reverse(&bigint);
+		print_big_int(&bigint);
+		printf(" * %d = ",factor);
+		print_big_int(&bigint_result);
+		printf("\n");
+		bigintarray_reverse(&bigint_result);
+		bigintarray_reverse(&bigint);
+		bigint = bigint_result;
+		factor++;
 	}
-	printf("%d\n", converted);
-	*/
+	bigintarray_reverse(&bigint_result);
+	//divide pyramid
+	for (size_t i = 0; i < 8; i++) {
+		print_big_int(&bigint_result);
+		divide(&bigint_result,divisor,&bigint_result_devide);
+		bigint_result = bigint_result_devide;
+		printf(" / %d = ",divisor);
+		print_big_int(&bigint_result_devide);
+		printf("\n");
+		divisor++;
+	}
 	return 0;
 }
