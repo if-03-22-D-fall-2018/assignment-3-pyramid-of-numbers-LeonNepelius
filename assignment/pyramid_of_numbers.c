@@ -52,11 +52,7 @@ int strtobig_int(const char *str, int len, struct BigInt *big_int)
 		len--;
 	}
 	big_int->digits_count = converted;
-	if (converted == 1)
-	{
-		return converted;
-	}
-	return converted-1;
+	return converted;
 }
 /** print_big_int() prints a BigInt.
 *** @param *big_int The BigInt to be printed.
