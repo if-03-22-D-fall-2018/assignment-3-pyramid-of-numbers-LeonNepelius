@@ -52,6 +52,10 @@ int strtobig_int(const char *str, int len, struct BigInt *big_int)
 		len--;
 	}
 	big_int->digits_count = converted;
+	if (converted == 1)
+	{
+		return converted;
+	}
 	return converted-1;
 }
 /** print_big_int() prints a BigInt.
@@ -176,7 +180,6 @@ int main(int argc, char *argv[])
 
 	length = strlen(input);
 	converted = strtobig_int(input,length,&bigint);
-
 	if (converted == 0)
 	{
 		return 0;
