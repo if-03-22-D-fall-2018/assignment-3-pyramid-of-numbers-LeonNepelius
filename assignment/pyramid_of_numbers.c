@@ -133,7 +133,7 @@ void divide(const struct BigInt *big_int, int divisor, struct BigInt *big_result
 */
 void copy_big_int(const struct BigInt *from, struct BigInt *to)
 {
-	*from = *to;
+	from = to;
 }
 
 void bigintarray_reverse(struct BigInt *big_int)
