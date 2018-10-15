@@ -179,7 +179,7 @@ int main(int argc, char *argv[])
 
 	length = strlen(input);
 	converted = strtobig_int(input,length,&bigint);
-	if (converted == 0)
+	if (converted == 0 || input[length] == 0)
 	{
 		return 0;
 	}
